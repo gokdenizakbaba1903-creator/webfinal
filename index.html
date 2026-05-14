@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My UI Library — Web Components Showcase</title>
+  <link rel="icon" href="data:,">
+  <meta name="description" content="Vanilla JS ile geliştirilmiş, Shadow DOM tabanlı özel web bileşenleri kütüphanesi demo sayfası." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Bileşenleri yükle -->
+  <script type="module" src="./src/index.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Base Variables (Dark Theme) */
+      --bg:       #07070f;
+      --bg2:      #0e0e1a;
+      --bg3:      #13131f;
+      --border:   rgba(255,255,255,.08);
+      --text:     #f1f5f9;
+      --muted:    rgba(255,255,255,.45);
+      
+      /* Web Components Theme Variables */
+      --wc-color-primary:        #6366f1;
+      --wc-color-primary-end:    #8b5cf6;
+      --wc-color-primary-glow:   rgba(99,102,241,.4);
+      --wc-color-surface:        #13131f;
+      --wc-color-border:         rgba(255,255,255,.12);
+      --wc-color-text:           #f1f5f9;
+      --wc-color-muted:          rgba(255,255,255,.55);
+      --wc-radius:               12px;
+      --wc-font:                 'Inter', sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg:       #f8fafc;
+      --bg2:      #ffffff;
+      --bg3:      #f1f5f9;
+      --border:   rgba(0,0,0,.1);
+      --text:     #0f172a;
+      --muted:    #64748b;
+      
+      --wc-color-surface:        #ffffff;
+      --wc-color-border:         rgba(0,0,0,.1);
+      --wc-color-text:           #0f172a;
+      --wc-color-muted:          #64748b;
+    }
+
+    [data-theme="purple"] {
+      --bg:       #1e1b4b;
+      --bg2:      #312e81;
+      --bg3:      #4338ca;
+      --border:   rgba(255,255,255,.15);
+      --text:     #e0e7ff;
+      --muted:    #a5b4fc;
+
+      --wc-color-primary:        #ec4899;
+      --wc-color-primary-end:    #f43f5e;
+      --wc-color-primary-glow:   rgba(236,72,153,.5);
+      --wc-color-surface:        #312e81;
+      --wc-color-border:         rgba(255,255,255,.2);
+      --wc-color-text:           #e0e7ff;
+      --wc-color-muted:          #a5b4fc;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Arka plan parçacıkları (Premium Animasyonlu) ── */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      z-index: 0;
+      animation: float 20s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+    
+    body::before {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, var(--wc-color-primary-glow) 0%, transparent 70%);
+      top: -200px; left: -200px;
+    }
+    
+    body::after {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(236,72,153,.15) 0%, transparent 70%);
+      bottom: -150px; right: -150px;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(50px, 30px) scale(1.1); }
+      100% { transform: translate(-30px, 50px) scale(0.9); }
+    }
+
+    /* ── Nav (Glassmorphism) ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      background: rgba(var(--bg-rgb, 7,7,15), .65);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 72px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+    .nav-logo {
+      font-size: 18px; font-weight: 800;
+      background: linear-gradient(135deg, var(--purple), var(--purple2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -.02em;
+    }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      color: var(--muted); font-size: 14px; font-weight: 500;
+      text-decoration: none; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-badge {
+      background: rgba(99,102,241,.15);
+      border: 1px solid rgba(99,102,241,.3);
+      color: #a5b4fc;
+      padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600;
+    }
+
+    /* ── Layout ── */
+    main { position: relative; z-index: 1; padding-top: 64px; }
+
+    .section {
+      max-width: 1100px; margin: 0 auto;
+      padding: 80px 24px;
+    }
+    .section + .section { padding-top: 0; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 120px 24px 80px;
+      max-width: 800px; margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(99,102,241,.12);
+      border: 1px solid rgba(99,102,241,.3);
+      color: #a5b4fc; font-size: 13px; font-weight: 600;
+      padding: 6px 16px; border-radius: 99px; margin-bottom: 24px;
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(36px,6vw,72px);
+      font-weight: 800; line-height: 1.1;
+      letter-spacing: -.03em;
+      margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--purple), var(--purple2), #ec4899);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { color: var(--muted); font-size: 18px; max-width: 520px; margin: 0 auto 36px; }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Section header ── */
+    .sec-header { margin-bottom: 40px; }
+    .sec-label {
+      font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: #818cf8; margin-bottom: 8px;
+    }
+    .sec-title { font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+    .sec-title + p { color: var(--muted); margin-top: 8px; font-size: 15px; }
+
+    /* ── Showcase grid (Premium Cards) ── */
+    .showcase {
+      background: rgba(var(--bg2-rgb, 14,14,26), .4);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .showcase::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.03) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .showcase-title {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      text-transform: uppercase; letter-spacing: .1em;
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .showcase-title::before {
+      content: '';
+      display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--purple);
+    }
+    .flex-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 20px; }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px; background: var(--border); margin: 0;
+    }
+
+    /* ── Chip ── */
+    .chip {
+      display: inline-block;
+      background: rgba(99,102,241,.1);
+      border: 1px solid rgba(99,102,241,.2);
+      color: #a5b4fc; font-size: 12px; font-weight: 600;
+      padding: 3px 10px; border-radius: 6px;
+      font-family: 'Inter', monospace;
+    }
+
+    /* ── Log box (Terminal Aesthetic) ── */
+    .log-box {
+      background: rgba(11,11,20,.8); 
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(74,222,128,.2);
+      border-radius: 12px; padding: 16px 20px;
+      font-family: 'Fira Code', monospace; font-size: 13px;
+      color: #4ade80; min-height: 60px;
+      margin-top: 20px; max-height: 120px; overflow-y: auto;
+      box-shadow: inset 0 2px 15px rgba(0,0,0,.3);
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 48px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 14px;
+    }
+    footer strong { color: #a5b4fc; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,.4); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">⚡ My UI Library</span>
+  <div class="nav-links">
+    <a href="#buttons">Button</a>
+    <a href="#cards">Card</a>
+    <a href="#modal">Modal</a>
+    <a href="#tooltip">Tooltip</a>
+    <a href="#dropdown">Dropdown</a>
+    <a href="#tabs">Tabs</a>
+    <a href="#badge-toast">Badge & Toast</a>
+  </div>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <select id="theme-switcher" style="background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: inherit;">
+      <option value="dark">Koyu Tema</option>
+      <option value="light">Açık Tema</option>
+      <option value="purple">Mor Tema</option>
+    </select>
+    <span class="nav-badge">v1.1.0</span>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">🧩 Vanilla JS · Shadow DOM · Custom Elements</div>
+    <h1>Modern <span>Web Components</span> Kütüphanesi</h1>
+    <p>Framework bağımlılığı olmadan, yerel web standartlarıyla geliştirilmiş hazır UI bileşenleri.</p>
+    <div class="hero-actions">
+      <wc-button theme="primary" size="lg" id="hero-demo-btn">🚀 Demo İzle</wc-button>
+      <a href="nasil-kullanilir.html" style="text-decoration:none;"><wc-button theme="ghost" size="lg">📖 Nasıl Kullanılır?</wc-button></a>
+    </div>
+  </div>
+
+  <!-- ══════════════ WC-BUTTON ══════════════ -->
+  <section id="buttons" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 01</div>
+      <div class="sec-title">wc-button</div>
+      <p>theme, size, disabled ve loading attribute'larını destekler.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Theme Varyasyonları</div>
+      <div class="flex-row">
+        <wc-button theme="primary">Primary</wc-button>
+        <wc-button theme="danger">Danger</wc-button>
+        <wc-button theme="success">Success</wc-button>
+        <wc-button theme="ghost">Ghost</wc-button>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Boyut Varyasyonları</div>
+      <div class="flex-row">
+        <wc-button theme="primary" size="sm">Küçük (sm)</wc-button>
+        <wc-button theme="primary" size="md">Orta (md)</wc-button>
+        <wc-button theme="primary" size="lg">Büyük (lg)</wc-button>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Özel Durumlar</div>
+      <div class="flex-row">
+        <wc-button theme="primary" disabled>Disabled</wc-button>
+        <wc-button theme="primary" loading>Yükleniyor</wc-button>
+        <wc-button theme="danger" loading size="lg">İşlem Yapılıyor</wc-button>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ WC-CARD ══════════════ -->
+  <section id="cards" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 02</div>
+      <div class="sec-title">wc-card</div>
+      <p>image, title, description slotları ve shadow-depth ayarı.</p>
+    </div>
+
+    <div class="card-grid">
+      <wc-card shadow-depth="low" hoverable image="https://placehold.co/600x340/6366f1/ffffff?text=Görsel+1">
+        <span slot="title">Kart Başlığı</span>
+        <span slot="description">HTML Template API kullanılarak yüksek performansla render edilen kart bileşeni.</span>
+        <div slot="actions">
+          <wc-button theme="primary" size="sm">Devamını Oku</wc-button>
+        </div>
+      </wc-card>
+
+      <wc-card shadow-depth="high" hoverable image="https://placehold.co/600x340/10b981/ffffff?text=Görsel+2">
+        <span slot="title">Özelleştirilmiş Gölgeler</span>
+        <span slot="description">Farklı shadow-depth seviyeleri ve hover animasyonları ile dinamik görünüm.</span>
+        <div slot="actions">
+          <wc-button theme="success" size="sm">Kabul Et</wc-button>
+          <wc-button theme="ghost" size="sm">Vazgeç</wc-button>
+        </div>
+      </wc-card>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ WC-MODAL ══════════════ -->
+  <section id="modal" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 03</div>
+      <div class="sec-title">wc-modal</div>
+      <p>open attribute ile kontrol, wc-close custom event, ESC & backdrop kapatma.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Modal Demosu</div>
+      <div class="flex-row">
+        <wc-button theme="primary" id="open-modal-1">📋 Normal Modal Aç</wc-button>
+        <wc-button theme="danger" id="open-modal-2">⚠️ Uyarı Modalı Aç</wc-button>
+      </div>
+      <div class="log-box" id="modal-log">Modal eventleri burada görünecek...</div>
+    </div>
+  </section>
+
+  <!-- Modal 1 -->
+  <wc-modal id="modal-1" title="📦 Bileşen Bilgisi">
+    <p style="color:rgba(255,255,255,.7);line-height:1.7;">
+      Bu bir <strong style="color:#a5b4fc;">wc-modal</strong> bileşenidir.
+      <br/><br/>
+      ESC tuşuna basarak, ✕ butonuna tıklayarak veya arka plana tıklayarak kapatabilirsiniz.
+      Kapatma işlemi gerçekleştiğinde <span style="color:#4ade80;">onClose</span> callback fonksiyonu tetiklenir.
+    </p>
+    <div slot="footer">
+      <wc-button theme="ghost" size="sm" id="close-modal-1-btn">Vazgeç</wc-button>
+      <wc-button theme="primary" size="sm">Tamam</wc-button>
+    </div>
+  </wc-modal>
+
+  <!-- Modal 2 -->
+  <wc-modal id="modal-2" title="⚠️ Dikkat!">
+    <p style="color:rgba(255,255,255,.7);line-height:1.7;">
+      Bu işlem geri alınamaz. Devam etmek istiyor musunuz?
+    </p>
+    <div slot="footer">
+      <wc-button theme="ghost" size="sm" id="close-modal-2-btn">Hayır, Vazgeç</wc-button>
+      <wc-button theme="danger" size="sm">Evet, Sil</wc-button>
+    </div>
+  </wc-modal>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ WC-TOOLTIP ══════════════ -->
+  <section id="tooltip" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 04</div>
+      <div class="sec-title">wc-tooltip</div>
+      <p>position (top, bottom, left, right) ve hover tetiklemesi.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Yön Varyasyonları — Üzerine Gelin</div>
+      <div class="flex-row" style="justify-content:center;gap:24px;padding:20px;">
+        <wc-tooltip content="Yukarıda görünür 🔼" position="top">
+          <wc-button theme="ghost" size="sm">Top</wc-button>
+        </wc-tooltip>
+
+        <wc-tooltip content="Aşağıda görünür 🔽" position="bottom">
+          <wc-button theme="ghost" size="sm">Bottom</wc-button>
+        </wc-tooltip>
+
+        <wc-tooltip content="Solda görünür ◀" position="left">
+          <wc-button theme="ghost" size="sm">Left</wc-button>
+        </wc-tooltip>
+
+        <wc-tooltip content="Sağda görünür ▶" position="right">
+          <wc-button theme="ghost" size="sm">Right</wc-button>
+        </wc-tooltip>
+
+        <wc-tooltip content="Bilgi: Bu bileşen Shadow DOM kullanır" position="top">
+          <wc-button theme="primary" size="sm">ℹ️ Bilgi</wc-button>
+        </wc-tooltip>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ WC-DROPDOWN ══════════════ -->
+  <section id="dropdown" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 05</div>
+      <div class="sec-title">wc-dropdown</div>
+      <p>İç içe slot yapısı, açılır menü, klavye navigasyonu ve dışa tıklama kapatma.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Dropdown Demosu</div>
+      <div class="flex-row" style="gap:20px;">
+
+        <wc-dropdown label="🎨 Tema Seç" id="dd1">
+          <span slot="item" id="dd1-dark">🌑 Koyu Tema</span>
+          <span slot="item" id="dd1-light">☀️ Açık Tema</span>
+          <span slot="item" id="dd1-system">💻 Sistem Teması</span>
+        </wc-dropdown>
+
+        <wc-dropdown label="🌐 Dil Seç" id="dd2">
+          <span slot="item">🇹🇷 Türkçe</span>
+          <span slot="item">🇬🇧 English</span>
+          <span slot="item">🇩🇪 Deutsch</span>
+          <span slot="item">🇫🇷 Français</span>
+        </wc-dropdown>
+
+        <wc-dropdown label="⚙️ Ayarlar" id="dd3">
+          <span slot="item">👤 Profil Düzenle</span>
+          <span slot="item">🔔 Bildirimler</span>
+          <span slot="item">🔒 Gizlilik</span>
+          <span slot="item" style="color:#f87171;">🚪 Çıkış Yap</span>
+        </wc-dropdown>
+      </div>
+      <div class="log-box" id="dropdown-log">Dropdown eventleri burada görünecek...</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ WC-TABS ══════════════ -->
+  <section id="tabs" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 06</div>
+      <div class="sec-title">wc-tabs</div>
+      <p>Sekme değiştirme, aktif sekme yönetimi, animasyonlu gösterge ve klavye navigasyonu (← →).</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Tabs Demosu</div>
+
+      <wc-tabs id="demo-tabs">
+        <span slot="tab-0">🚀 Hızlı Başlangıç</span>
+        <span slot="tab-1">📦 Kurulum</span>
+        <span slot="tab-2">🎨 Özelleştirme</span>
+
+        <div slot="panel-0" style="padding:8px 0;">
+          <p style="color:rgba(255,255,255,.7);margin-bottom:16px;">Kütüphaneyi kullanmaya başlamak için tek yapmanız gereken JS dosyalarını import etmektir:</p>
+          <pre style="background:#0b0b14;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px;font-size:13px;color:#a5b4fc;overflow-x:auto;">&lt;script type="module" src="./src/index.js"&gt;&lt;/script&gt;
+
+&lt;wc-button theme="primary"&gt;Merhaba Dünya!&lt;/wc-button&gt;</pre>
+        </div>
+
+        <div slot="panel-1" style="padding:8px 0;">
+          <p style="color:rgba(255,255,255,.7);margin-bottom:16px;">Bileşenleri tek tek veya toplu olarak import edebilirsiniz:</p>
+          <pre style="background:#0b0b14;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px;font-size:13px;color:#4ade80;overflow-x:auto;">import { WcButton, WcCard, WcModal } from './src/index.js';
+
+// Veya tek tek:
+import WcButton from './src/components/wc-button/wc-button.js';</pre>
+        </div>
+
+        <div slot="panel-2" style="padding:8px 0;">
+          <p style="color:rgba(255,255,255,.7);margin-bottom:16px;">CSS custom properties ve part selector ile özelleştirebilirsiniz:</p>
+          <pre style="background:#0b0b14;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px;font-size:13px;color:#f9a8d4;overflow-x:auto;">wc-button::part(button) {
+  border-radius: 999px; /* Pill şekli */
+}
+
+wc-card::part(card) {
+  border: 2px solid #6366f1;
+}</pre>
+        </div>
+      </wc-tabs>
+
+      <div class="log-box" id="tabs-log" style="margin-top:20px;">Tab eventleri burada görünecek...</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ WC-BADGE & WC-TOAST ══════════════ -->
+  <section id="badge-toast" class="section">
+    <div class="sec-header">
+      <div class="sec-label">Bileşen 07 & 08</div>
+      <div class="sec-title">wc-badge & wc-toast</div>
+      <p>Yeni eklenen bildirim sayacı ve asenkron toast mesaj sistemi.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Badge Demosu</div>
+      <div class="flex-row" style="gap: 32px; padding: 10px;">
+        <wc-badge count="5" theme="danger">
+          <wc-button theme="ghost">Gelen Kutusu</wc-button>
+        </wc-badge>
+        
+        <wc-badge count="150" theme="primary" pulse>
+          <wc-button>Mesajlar</wc-button>
+        </wc-badge>
+
+        <wc-badge text="PRO" theme="warning">
+          <span style="font-size: 14px; color: var(--text);">Profil Ayarları</span>
+        </wc-badge>
+
+        <div>
+          <span style="font-size: 14px; color: var(--text); margin-right: 8px;">Bağımsız Kullanım:</span>
+          <wc-badge text="YENİ" theme="success"></wc-badge>
+          <wc-badge count="3" theme="primary"></wc-badge>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Toast Demosu (Kuyruk Destekli)</div>
+      <div class="flex-row">
+        <wc-button theme="success" id="btn-toast-success">Success Toast</wc-button>
+        <wc-button theme="danger" id="btn-toast-danger">Danger Toast</wc-button>
+        <wc-button theme="primary" id="btn-toast-info">Info Toast</wc-button>
+        <wc-button theme="ghost" id="btn-toast-multi">Hızlıca Çoklu Gönder</wc-button>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ FORM BİLEŞENLERİ ══════════════ -->
+  <section id="forms" class="section">
+    <div class="sec-header">
+      <div class="sec-label">YENİ BİLEŞENLER 01</div>
+      <div class="sec-title">Form Elemanları</div>
+      <p>Input, Textarea, Checkbox, Radio, Switch ile tam teşekküllü form altyapısı.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Metin Girişleri</div>
+      <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px;">
+        <wc-input label="E-posta Adresi" type="email" icon="✉️"></wc-input>
+        <wc-input label="Kullanıcı Adı" error="Bu kullanıcı adı alınmış."></wc-input>
+        <wc-textarea label="Hakkımda" maxlength="150" rows="4"></wc-textarea>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Seçim Elemanları</div>
+      <div class="flex-row" style="align-items: center; gap: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <wc-checkbox label="Kullanım Koşullarını Kabul Ediyorum"></wc-checkbox>
+          <wc-checkbox label="Beni Hatırla" checked></wc-checkbox>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <wc-radio name="plan" label="Aylık Plan" value="monthly"></wc-radio>
+          <wc-radio name="plan" label="Yıllık Plan" value="yearly" checked></wc-radio>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <wc-switch label="Gece Modu" checked></wc-switch>
+          <wc-switch label="Bildirimler"></wc-switch>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════ VERİ VE GERİ BİLDİRİM ══════════════ -->
+  <section id="feedback" class="section">
+    <div class="sec-header">
+      <div class="sec-label">YENİ BİLEŞENLER 02</div>
+      <div class="sec-title">Veri & Bildirim Elemanları</div>
+      <p>Avatar, Spinner, Progress, Accordion, Alert ve Skeleton loading.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Kullanıcı & Yükleme Durumları</div>
+      <div class="flex-row" style="align-items: center;">
+        <wc-avatar name="Ahmet Yılmaz" status="online" size="lg"></wc-avatar>
+        <wc-avatar src="https://i.pravatar.cc/150?img=12" status="busy"></wc-avatar>
+        
+        <wc-divider orientation="vertical"></wc-divider>
+
+        <wc-spinner size="lg"></wc-spinner>
+        <wc-spinner theme="success"></wc-spinner>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">İlerleme & Uyarılar</div>
+      <div style="display: flex; flex-direction: column; gap: 24px; max-width: 600px;">
+        <wc-progress value="65" label="Dosya Yükleniyor..."></wc-progress>
+        
+        <wc-alert theme="warning" title="Sistem Bakımı">
+          Bu gece 03:00 - 05:00 saatleri arasında altyapı çalışması yapılacaktır. Lütfen çalışmalarınızı kaydedin.
+        </wc-alert>
+      </div>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase-title">Skeleton & Accordion</div>
+      <div style="display: flex; flex-direction: column; gap: 24px; max-width: 600px;">
+        
+        <div style="display: flex; gap: 16px;">
+          <wc-skeleton type="circle"></wc-skeleton>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+            <wc-skeleton width="60%"></wc-skeleton>
+            <wc-skeleton width="40%"></wc-skeleton>
+          </div>
+        </div>
+
+        <div>
+          <wc-accordion title="Bu UI kütüphanesi React ile çalışır mı?">
+            Evet! Web Components teknolojisi tarayıcı standartlarına dayandığı için React, Vue, Angular, Svelte ve Vanilla JS dahil tüm modern framework'lerde hiçbir uyumsuzluk sorunu yaşamadan kullanılabilir.
+          </wc-accordion>
+          <wc-accordion title="Tema renklerini nasıl değiştiririm?">
+            Global CSS dosyanızda veya :root seçicisinde <code>--wc-color-primary</code> gibi CSS değişkenlerini tanımlamanız yeterlidir.
+          </wc-accordion>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<wc-toast></wc-toast>
+
+
+<footer>
+  <p>⚡ <strong>My UI Library</strong> — Vanilla JS · Shadow DOM · Custom Elements API ile geliştirildi.</p>
+  <p style="margin-top:8px;">6 bileşen · framework bağımlılığı yok · tam erişilebilirlik desteği</p>
+</footer>
+
+<script>
+  // ── Modal event bağlantıları ──
+  const modalLog = document.getElementById('modal-log');
+  const modal1   = document.getElementById('modal-1');
+  const modal2   = document.getElementById('modal-2');
+
+  document.getElementById('open-modal-1').addEventListener('click', () => { modal1.open = true; });
+  document.getElementById('open-modal-2').addEventListener('click', () => { modal2.open = true; });
+  document.getElementById('close-modal-1-btn').addEventListener('click', () => { modal1.open = false; });
+  document.getElementById('close-modal-2-btn').addEventListener('click', () => { modal2.open = false; });
+
+  [modal1, modal2].forEach(m => {
+    m.onClose = () => {
+      const time = new Date().toLocaleTimeString('tr-TR');
+      modalLog.textContent = `[${time}] 🔴 onClose callback tetiklendi — modal#${m.id} kapandı`;
+    };
+  });
+
+  // ── Dropdown event bağlantıları ──
+  const ddLog = document.getElementById('dropdown-log');
+  document.querySelectorAll('wc-dropdown').forEach(dd => {
+    dd.addEventListener('wc-toggle', (e) => {
+      ddLog.textContent = `wc-toggle → #${dd.id || 'dd'} isOpen: ${e.detail.isOpen}`;
+    });
+  });
+  // Item click logla
+  ['dd1-dark','dd1-light','dd1-system'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => {
+      ddLog.textContent = `Seçildi: ${el.textContent.trim()}`;
+    });
+  });
+
+  // ── Tabs event bağlantıları ──
+  const tabsLog = document.getElementById('tabs-log');
+  document.getElementById('demo-tabs').addEventListener('wc-tab-change', (e) => {
+    const labels = ['Hızlı Başlangıç', 'Kurulum', 'Özelleştirme'];
+    tabsLog.textContent = `wc-tab-change → activeIndex: ${e.detail.activeIndex} ("${labels[e.detail.activeIndex]}")`;
+  });
+
+  // ── Hero butonu demo modal aç ──
+  document.getElementById('hero-demo-btn').addEventListener('click', () => { modal1.open = true; });
+
+  // ── Toast Eventleri ──
+  const toast = document.querySelector('wc-toast');
+  
+  document.getElementById('btn-toast-success').addEventListener('click', () => {
+    toast.show({ message: 'İşlem başarıyla tamamlandı! 🚀', type: 'success', duration: 4000 });
+  });
+  
+  document.getElementById('btn-toast-danger').addEventListener('click', () => {
+    toast.show({ message: 'Bir hata oluştu. Lütfen tekrar deneyin.', type: 'danger' });
+  });
+  
+  document.getElementById('btn-toast-info').addEventListener('click', () => {
+    toast.show({ message: 'Sistem güncellemesi yarın gece yapılacaktır.', type: 'info' });
+  });
+  
+  document.getElementById('btn-toast-multi').addEventListener('click', () => {
+    toast.show({ message: 'Birinci bildirim (Kuyruğa eklendi)', type: 'primary', duration: 2000 });
+    toast.show({ message: 'İkinci bildirim (Kuyruğa eklendi)', type: 'warning', duration: 2000 });
+    toast.show({ message: 'Üçüncü bildirim (Kuyruğa eklendi)', type: 'success', duration: 2000 });
+  });
+
+  // ── Theme Switcher ──
+  const themeSwitcher = document.getElementById('theme-switcher');
+  themeSwitcher.addEventListener('change', (e) => {
+    document.documentElement.setAttribute('data-theme', e.target.value);
+  });
+
+  // ── Click to Copy Snippet (Hızlı Kopyalama) ──
+  document.addEventListener('click', async (e) => {
+    // Sadece showcase içindeki bileşenleri kopyalamak için
+    const showcase = e.target.closest('.showcase');
+    if (!showcase) return;
+
+    let current = e.target;
+    // Tıklanan elementin veya ebeveynlerinin WC- bileşeni olup olmadığını bul
+    while (current && current !== showcase) {
+      if (current.tagName && current.tagName.startsWith('WC-')) {
+        break;
+      }
+      current = current.parentElement;
+    }
+
+    if (current && current.tagName && current.tagName.startsWith('WC-')) {
+      // Seçili bileşenin tam HTML kodunu al
+      let codeSnippet = current.outerHTML;
+      
+      try {
+        await navigator.clipboard.writeText(codeSnippet);
+        const toastEl = document.querySelector('wc-toast');
+        if (toastEl) {
+          toastEl.show({
+            message: `Panoya Kopyalandı: &lt;${current.tagName.toLowerCase()}&gt; 📋`,
+            type: 'success',
+            duration: 2500
+          });
+        }
+      } catch (err) {
+        console.error('Kopyalama başarısız:', err);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

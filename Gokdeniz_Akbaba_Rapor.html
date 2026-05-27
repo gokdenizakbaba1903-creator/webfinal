@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Gökdeniz Akbaba - Web Tabanlı Programlama Final Projesi Raporu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Noto Serif','Times New Roman',serif;background:#fff;color:#000;font-size:12pt;line-height:1.8}
+  .page{width:210mm;min-height:297mm;margin:0 auto 20px;padding:25mm 20mm;border:1px solid #ddd}
+  .cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:247mm}
+  .cover .uni{font-size:13pt;font-weight:bold;margin:4px 0}
+  .cover .proje-adi{font-size:22pt;font-weight:bold;margin:40px 0 10px;text-transform:uppercase}
+  .cover .alt{font-size:13pt;margin:6px 0}
+  .cover hr{width:70%;border:1px solid #000;margin:25px auto}
+  h1.bolum{font-size:14pt;font-weight:bold;border-bottom:2px solid #000;padding-bottom:4px;margin:25px 0 12px;text-transform:uppercase}
+  h2.alt-bolum{font-size:12pt;font-weight:bold;margin:18px 0 8px}
+  p{margin-bottom:10px;text-align:justify}
+  ul{margin:0 0 12px 20px}
+  li{margin-bottom:5px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:10.5pt}
+  th{background:#222;color:#fff;padding:8px 10px;text-align:left}
+  td{padding:7px 10px;border:1px solid #ccc}
+  tr:nth-child(even) td{background:#f9f9f9}
+  pre{background:#f4f4f4;border-left:4px solid #555;padding:12px;font-size:9pt;white-space:pre-wrap;margin:12px 0}
+  code{background:#f0f0f0;padding:1px 5px;border-radius:3px;font-size:10pt}
+  .toc-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted #ccc}
+  @media print{.page{border:none;margin:0}}
+</style>
+</head>
+<body>
+
+<!-- ===== KAPAK ===== -->
+<div class="page cover">
+  <p class="uni">BİTLİS EREN ÜNİVERSİTESİ</p>
+  <p class="uni">Mühendislik-Mimarlık Fakültesi</p>
+  <p class="uni">Bilgisayar Mühendisliği Bölümü</p>
+  <hr>
+  <p class="proje-adi">Web Bileşen Kütüphanesi</p>
+  <p class="alt">Web Tabanlı Programlama Dersi</p>
+  <p class="alt">Final Projesi Raporu</p>
+  <hr>
+  <p class="uni" style="font-size:15pt;margin-top:10px"><strong>GÖKDENİZ AKBABA</strong></p>
+  <p class="alt">Öğrenci No: 24080410037</p>
+  <p class="alt" style="margin-top:30px">Mayıs 2026</p>
+</div>
+
+<!-- ===== İÇİNDEKİLER ===== -->
+<div class="page">
+  <h1 class="bolum">İçindekiler</h1>
+  <div class="toc-item"><span>1. Giriş</span><span>3</span></div>
+  <div class="toc-item"><span>2. Proje Tanımı ve Amacı</span><span>3</span></div>
+  <div class="toc-item"><span>3. Kullanılan Teknolojiler</span><span>4</span></div>
+  <div class="toc-item"><span>4. Proje Yapısı</span><span>4</span></div>
+  <div class="toc-item"><span>5. Bileşenler (20 Adet)</span><span>5</span></div>
+  <div class="toc-item"><span>6. Web Components API Kullanımları</span><span>6</span></div>
+  <div class="toc-item"><span>7. Erişilebilirlik (A11y)</span><span>7</span></div>
+  <div class="toc-item"><span>8. Zorluklar ve Çözümler</span><span>8</span></div>
+  <div class="toc-item"><span>9. Sonuç</span><span>9</span></div>
+  <div class="toc-item"><span>10. Kaynaklar</span><span>9</span></div>
+</div>
+
+<!-- ===== GİRİŞ ===== -->
+<div class="page">
+  <h1 class="bolum">1. Giriş</h1>
+  <p>Bu rapor, Web Tabanlı Programlama dersi kapsamında geliştirilen <strong>"Web Bileşen Kütüphanesi"</strong> projesini kapsamlı biçimde açıklamaktadır. Proje; modern web standartlarını, framework bağımsız mimarisini ve yeniden kullanılabilir bileşen yaklaşımını benimseyerek Vanilla JavaScript, Shadow DOM ve Custom Elements API üzerine inşa edilmiş bir Web Components UI kütüphanesidir.</p>
+  <p>Günümüz web geliştirme ekosisteminde React, Vue ve Angular gibi büyük frameworkler yaygın olarak kullanılmaktadır. Ancak bu frameworklerin her projede zorunlu bağımlılıklara yol açtığı görülebilmektedir. Bu proje, tarayıcı tarafından doğrudan desteklenen Web Components standardını kullanarak herhangi bir framework bağımlılığı olmaksızın güçlü ve esnek bir UI kütüphanesi oluşturmayı hedeflemiştir.</p>
+
+  <h1 class="bolum">2. Proje Tanımı ve Amacı</h1>
+  <p><strong>"Web Bileşen Kütüphanesi"</strong>, 20 adet yeniden kullanılabilir Web Component barındıran, tamamen Vanilla JavaScript ile yazılmış bir UI kütüphanesidir. Projenin temel amaçları şunlardır:</p>
+  <ul>
+    <li>Framework bağımsız, herhangi bir HTML sayfasında kullanılabilir bileşen seti oluşturmak</li>
+    <li>Shadow DOM ile stil kapsülleme (encapsulation) sağlamak</li>
+    <li>CSS Custom Properties ile dinamik tema desteği sunmak</li>
+    <li>WCAG 2.1 standartlarına uygun erişilebilir bileşen yazmak</li>
+    <li>ES Modules ile modüler ve sürdürülebilir kod mimarisi kurmak</li>
+    <li>Kapsamlı bir demo sayfası ile kullanım kolaylığı sağlamak</li>
+  </ul>
+</div>
+
+<!-- ===== TEKNOLOJİLER ===== -->
+<div class="page">
+  <h1 class="bolum">3. Kullanılan Teknolojiler</h1>
+  <table>
+    <tr><th>Teknoloji</th><th>Standart / Versiyon</th><th>Kullanım Amacı</th></tr>
+    <tr><td>HTML5</td><td>Living Standard</td><td>Bileşen şablonu ve demo sayfası yapısı</td></tr>
+    <tr><td>CSS3 / Custom Properties</td><td>Living Standard</td><td>Tema sistemi, animasyonlar, stil kapsülleme</td></tr>
+    <tr><td>Vanilla JavaScript</td><td>ES2020+</td><td>Bileşen mantığı, olaylar, DOM yönetimi</td></tr>
+    <tr><td>Custom Elements API</td><td>W3C Standard</td><td>Özelleştirilebilir HTML etiketleri tanımlama</td></tr>
+    <tr><td>Shadow DOM API</td><td>W3C Standard</td><td>Stil ve DOM izolasyonu</td></tr>
+    <tr><td>HTML Templates API</td><td>W3C Standard</td><td>Performanslı bileşen şablonlama</td></tr>
+    <tr><td>ES Modules (import/export)</td><td>ES2015+</td><td>Bileşen import/export yönetimi</td></tr>
+  </table>
+
+  <h1 class="bolum">4. Proje Yapısı</h1>
+  <pre>
+web-bilesen-kutuphanesi/
+├── src/
+│   ├── components/
+│   │   ├── wc-button/      → wc-button.js
+│   │   ├── wc-card/        → wc-card.js
+│   │   ├── wc-modal/       → wc-modal.js
+│   │   ├── wc-tooltip/     → wc-tooltip.js
+│   │   ├── wc-dropdown/    → wc-dropdown.js
+│   │   ├── wc-tabs/        → wc-tabs.js
+│   │   ├── wc-badge/       → wc-badge.js
+│   │   ├── wc-toast/       → wc-toast.js
+│   │   ├── wc-input/       → wc-input.js
+│   │   ├── wc-textarea/    → wc-textarea.js
+│   │   ├── wc-checkbox/    → wc-checkbox.js
+│   │   ├── wc-radio/       → wc-radio.js
+│   │   ├── wc-switch/      → wc-switch.js
+│   │   ├── wc-avatar/      → wc-avatar.js
+│   │   ├── wc-spinner/     → wc-spinner.js
+│   │   ├── wc-progress/    → wc-progress.js
+│   │   ├── wc-accordion/   → wc-accordion.js
+│   │   ├── wc-divider/     → wc-divider.js
+│   │   ├── wc-alert/       → wc-alert.js
+│   │   └── wc-skeleton/    → wc-skeleton.js
+│   └── index.js            ← Tüm 20 bileşen buradan export edilir
+├── index.html              ← Demo ve Showcase sayfası
+└── README.md
+  </pre>
+</div>
+
+<!-- ===== BİLEŞENLER ===== -->
+<div class="page">
+  <h1 class="bolum">5. Bileşenler (20 Adet)</h1>
+
+  <h2 class="alt-bolum">5.1 Temel UI Bileşenleri</h2>
+  <table>
+    <tr><th>Bileşen</th><th>Özellikler (Attributes)</th></tr>
+    <tr><td><code>&lt;wc-button&gt;</code></td><td>theme (primary/danger/success/ghost), size (sm/md/lg), disabled, loading</td></tr>
+    <tr><td><code>&lt;wc-card&gt;</code></td><td>shadow-depth, hoverable, image; HTML Template API ile geliştirildi</td></tr>
+    <tr><td><code>&lt;wc-modal&gt;</code></td><td>open, title; A11y focus trap, ESC kapatma desteği</td></tr>
+    <tr><td><code>&lt;wc-tooltip&gt;</code></td><td>content, position (top/bottom/left/right)</td></tr>
+    <tr><td><code>&lt;wc-dropdown&gt;</code></td><td>Slot yapısı, dışarıya tıklanınca kapanma</td></tr>
+    <tr><td><code>&lt;wc-tabs&gt;</code></td><td>Klavye navigasyonu (ok/Home/End tuşları)</td></tr>
+  </table>
+
+  <h2 class="alt-bolum">5.2 Bildirim ve Geri Bildirim Bileşenleri</h2>
+  <table>
+    <tr><th>Bileşen</th><th>Özellikler</th></tr>
+    <tr><td><code>&lt;wc-badge&gt;</code></td><td>count, text, theme, pulse (animasyonlu bildirim sayacı)</td></tr>
+    <tr><td><code>&lt;wc-toast&gt;</code></td><td>Kuyruk yönetimli bildirim; success/danger/warning/info tipleri</td></tr>
+    <tr><td><code>&lt;wc-alert&gt;</code></td><td>İkonlu banner mesaj kutusu</td></tr>
+    <tr><td><code>&lt;wc-spinner&gt;</code></td><td>Temalandırılabilir bekleme animasyonu</td></tr>
+    <tr><td><code>&lt;wc-progress&gt;</code></td><td>Dinamik yüzde, parlama efektli yükleme çubuğu</td></tr>
+    <tr><td><code>&lt;wc-skeleton&gt;</code></td><td>Parlama efektli yer tutucu (loading state)</td></tr>
+  </table>
+
+  <h2 class="alt-bolum">5.3 Form Bileşenleri</h2>
+  <table>
+    <tr><th>Bileşen</th><th>Özellikler</th></tr>
+    <tr><td><code>&lt;wc-input&gt;</code></td><td>İkon, hata durumu, floating label desteği</td></tr>
+    <tr><td><code>&lt;wc-textarea&gt;</code></td><td>Auto-resize, karakter sayacı</td></tr>
+    <tr><td><code>&lt;wc-checkbox&gt;</code></td><td>Özel SVG animasyonlu onay kutusu</td></tr>
+    <tr><td><code>&lt;wc-radio&gt;</code></td><td>Grup içi seçim, animasyonlu doldurma</td></tr>
+    <tr><td><code>&lt;wc-switch&gt;</code></td><td>Modern açma/kapama tuşu (iOS stili)</td></tr>
+  </table>
+
+  <h2 class="alt-bolum">5.4 Diğer Bileşenler</h2>
+  <table>
+    <tr><th>Bileşen</th><th>Özellikler</th></tr>
+    <tr><td><code>&lt;wc-avatar&gt;</code></td><td>Resim veya baş harf, online/offline durum göstergesi</td></tr>
+    <tr><td><code>&lt;wc-accordion&gt;</code></td><td>CSS transition ile katlanabilir içerik paneli</td></tr>
+    <tr><td><code>&lt;wc-divider&gt;</code></td><td>Metin alabilen yatay/dikey bölücü çizgi</td></tr>
+  </table>
+</div>
+
+<!-- ===== WEB COMPONENTS API ===== -->
+<div class="page">
+  <h1 class="bolum">6. Web Components API Kullanımları</h1>
+  <p>Bu projede Web Components standardının 3 temel yapı taşı eksiksiz kullanılmıştır:</p>
+
+  <h2 class="alt-bolum">6.1 Custom Elements API</h2>
+  <p><code>customElements.define('wc-*', SinifAdi)</code> çağrısıyla her bileşen tarayıcıya tanıtılmıştır. Her bileşen kendi dosyasında tanımlanmakta, <code>src/index.js</code> aracılığıyla tek noktadan dışa aktarılmaktadır.</p>
+  <pre>
+class WcModal extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' }); // Shadow DOM eklendi
+  }
+  static get observedAttributes() { return ['open', 'title']; }
+  connectedCallback() {
+    this.setAttribute('role', 'dialog');
+    this.setAttribute('aria-modal', 'true');
+    this.render();
+  }
+  attributeChangedCallback(name, oldVal, newVal) {
+    if (oldVal !== newVal) this.render(); // Reaktif güncelleme
+  }
+}
+customElements.define('wc-modal', WcModal);
+  </pre>
+
+  <h2 class="alt-bolum">6.2 Shadow DOM</h2>
+  <p><code>attachShadow({ mode: 'open' })</code> ile CSS kapsülleme sağlanmıştır. Bileşen stilleri dışarıya sızmaz; dışarıdaki stiller bileşeni bozmaz. CSS Custom Properties ise bu izolasyonu aşarak esnek tema desteği sağlar.</p>
+
+  <h2 class="alt-bolum">6.3 HTML Templates API</h2>
+  <p><code>&lt;wc-card&gt;</code> bileşeninde <code>document.createElement('template')</code> kullanılmıştır. DOM bir kez parse edilir, her kullanımda <code>.cloneNode(true)</code> ile kopyalanarak yüksek performans elde edilir.</p>
+
+  <h2 class="alt-bolum">6.4 Tema Sistemi</h2>
+  <pre>
+:root {
+  --wc-color-primary: #6366f1;   /* Ana renk */
+  --wc-color-surface: #13131f;   /* Arka plan */
+  --wc-color-text:    #f1f5f9;   /* Metin rengi */
+  --wc-radius:        12px;      /* Köşe yarıçapı */
+  --wc-font:          'Inter', sans-serif;
+}
+  </pre>
+  <p>Demo sayfasında Koyu, Açık ve Mor olmak üzere 3 tema varyasyonu bulunmaktadır.</p>
+</div>
+
+<!-- ===== A11Y ===== -->
+<div class="page">
+  <h1 class="bolum">7. Erişilebilirlik (A11y)</h1>
+  <p>Erişilebilirlik bu kütüphanenin öncelikli odak noktalarından biridir. WCAG 2.1 standartları referans alınmıştır.</p>
+
+  <h2 class="alt-bolum">7.1 Focus Trap (Klavye Tuzağı)</h2>
+  <p><code>&lt;wc-modal&gt;</code> açıldığında Tab tuşuyla gezinme yalnızca modal içinde kalır. Bu özellik WCAG 2.1.2 gereksinimini karşılar.</p>
+  <pre>
+_trapFocus(e) {
+  if (e.key !== 'Tab') return;
+  const focusable = [...this.shadowRoot.querySelectorAll(
+    'button, [href], input, [tabindex]:not([tabindex="-1"])'
+  )];
+  const slotted = [...this.querySelectorAll(
+    'button, [href], input, [tabindex]:not([tabindex="-1"])'
+  )];
+  const all = [...focusable, ...slotted].filter(el => !el.disabled);
+  const first = all[0];
+  const last  = all[all.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault(); last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault(); first.focus();
+  }
+}
+  </pre>
+
+  <h2 class="alt-bolum">7.2 Klavye Navigasyonu</h2>
+  <ul>
+    <li><strong>wc-tabs:</strong> Yön tuşları, Home ve End ile sekme değiştirme</li>
+    <li><strong>wc-dropdown:</strong> Enter, Boşluk ve yön tuşlarıyla kontrol</li>
+    <li><strong>wc-modal:</strong> ESC tuşu ile kapatma</li>
+  </ul>
+
+  <h2 class="alt-bolum">7.3 ARIA Etiketleri</h2>
+  <p><code>role="dialog"</code>, <code>aria-modal</code>, <code>aria-selected</code>, <code>aria-expanded</code> gibi etiketler state değişimlerinde dinamik olarak güncellenmektedir.</p>
+</div>
+
+<!-- ===== ZORLUKLAR ===== -->
+<div class="page">
+  <h1 class="bolum">8. Zorluklar ve Çözümler</h1>
+
+  <h2 class="alt-bolum">Zorluk 1 — Shadow DOM Tema Yönetimi</h2>
+  <p><strong>Problem:</strong> Shadow DOM içindeki elementlerin dışarıdan tamamen izole olması nedeniyle renk/font gibi tema bilgilerinin bileşene aktarılamaması.</p>
+  <p><strong>Çözüm:</strong> CSS Custom Properties (<code>--wc-*</code>) kullanıldı. Shadow DOM bu değişkenlerin dışarıdan içeriye sızmasına izin verir; böylece izolasyon bozulmadan tema desteği sağlandı.</p>
+
+  <h2 class="alt-bolum">Zorluk 2 — Dışarıya Tıklanınca Kapanma</h2>
+  <p><strong>Problem:</strong> Dropdown ve Modal'ın "dışarıya tıklanınca kapanma" davranışında event target'ın Shadow Root nedeniyle her zaman host element olarak görünmesi.</p>
+  <p><strong>Çözüm:</strong> Event listener'lar document düzeyine bağlandı. <code>.contains(e.target)</code> ile tıklamanın host içinde mi dışında mı olduğu kontrol edildi.</p>
+
+  <h2 class="alt-bolum">Zorluk 3 — Modal A11y Focus Trap</h2>
+  <p><strong>Problem:</strong> Modal açıkken arka plandaki içeriğe Tab tuşuyla erişilebilmesi (WCAG 2.1.2 ihlali).</p>
+  <p><strong>Çözüm:</strong> Özel <code>_trapFocus()</code> metodu yazıldı. Shift+Tab ve Tab yönleri kontrol edilerek odak döngüsü oluşturuldu.</p>
+
+  <h2 class="alt-bolum">Zorluk 4 — ES Module CORS Kısıtlaması</h2>
+  <p><strong>Problem:</strong> ES Modules'un CORS kısıtlaması nedeniyle dosya sistemi üzerinden doğrudan (<code>file://</code> protokolüyle) açılamaması.</p>
+  <p><strong>Çözüm:</strong> VS Code Live Server uzantısı veya herhangi bir HTTP sunucusu kullanılması gerektiği dokümante edildi.</p>
+</div>
+
+<!-- ===== SONUÇ ===== -->
+<div class="page">
+  <h1 class="bolum">9. Sonuç</h1>
+  <p>Bu proje kapsamında geliştirilen <strong>"Web Bileşen Kütüphanesi"</strong>, modern tarayıcı standartları kullanılarak oluşturulmuş, 20 adet Web Component barındıran kapsamlı bir UI kütüphanesidir. Projenin en önemli kazanımları şu şekilde özetlenebilir:</p>
+  <ul>
+    <li>Web Components'in 3 temel yapı taşı (Custom Elements, Shadow DOM, HTML Templates) başarıyla uygulanmıştır</li>
+    <li>Herhangi bir framework bağımlılığı olmadan çalışabilmektedir</li>
+    <li>CSS Custom Properties tabanlı esnek tema sistemi oluşturulmuştur</li>
+    <li>WCAG 2.1 standartlarına uygun erişilebilirlik özellikleri eklenmiştir</li>
+    <li>Kapsamlı demo sayfası ile kullanıcılara canlı ön izleme imkânı sunulmuştur</li>
+    <li>GitHub üzerinde versiyon kontrolü sağlanmıştır</li>
+  </ul>
+  <p>Proje, gerçek dünyada kullanılabilecek kalitede, production-ready bir UI kütüphanesi olma hedefine ulaşarak tamamlanmıştır.</p>
+
+  <h1 class="bolum">10. Kaynaklar</h1>
+  <ul>
+    <li>MDN Web Docs — Web Components: <em>https://developer.mozilla.org/en-US/docs/Web/API/Web_components</em></li>
+    <li>MDN — Using templates and slots: <em>https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_templates_and_slots</em></li>
+    <li>Web.dev — Custom Elements v1: <em>https://web.dev/custom-elements-v1/</em></li>
+    <li>W3C — WAI-ARIA Authoring Practices (Focus Trap): <em>https://www.w3.org/WAI/ARIA/apg/</em></li>
+    <li>WHATWG — HTML Living Standard: <em>https://html.spec.whatwg.org/</em></li>
+  </ul>
+</div>
+
+</body>
+</html>
